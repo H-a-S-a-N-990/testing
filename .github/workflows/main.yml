@@ -1,0 +1,36 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # This will trigger the workflow on version tags like v1.0, v2.1, etc.
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}  # Use the tag that triggered the workflow
+          release_name: Release ${{ github.ref }}  # Name of the release
+          body: |
+            Changes in this release:
+            - Add your release notes here.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload server.zip to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          files: server.zip  # Specify the path to the file you want to upload
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
